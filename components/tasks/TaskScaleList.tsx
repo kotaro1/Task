@@ -1,11 +1,13 @@
 import {
   Category,
   Task,
+  TaskScale,
   TaskStatus,
-  TASK_STATUS_LABELS,
-  TASK_STATUS_ORDER,
+  TASK_SCALE_LABELS,
 } from "@/lib/types";
 import { TaskRow } from "./TaskRow";
+
+const COLUMN_SCALES: TaskScale[] = ["month", "year", "school", "life"];
 
 export function TaskScaleList({
   tasks,
@@ -19,13 +21,13 @@ export function TaskScaleList({
   onTaskClick: (task: Task) => void;
 }) {
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-      {TASK_STATUS_ORDER.map((status) => {
-        const columnTasks = tasks.filter((t) => t.status === status);
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+      {COLUMN_SCALES.map((scale) => {
+        const columnTasks = tasks.filter((t) => t.scale === scale);
         return (
-          <div key={status} className="flex flex-col gap-2">
+          <div key={scale} className="flex flex-col gap-2">
             <h2 className="px-1 text-sm font-semibold text-neutral-700">
-              {TASK_STATUS_LABELS[status]}
+              {TASK_SCALE_LABELS[scale]}
               <span className="ml-1 text-neutral-400">
                 ({columnTasks.length})
               </span>

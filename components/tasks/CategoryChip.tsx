@@ -5,10 +5,12 @@ export function CategoryChip({ category }: { category: Category | null }) {
 
   return (
     <span
-      className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium text-white"
+      title={category.name}
+      aria-label={category.name}
+      className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold text-white"
       style={{ backgroundColor: category.color ?? "#737373" }}
     >
-      {category.name}
+      {category.name.slice(0, 1)}
     </span>
   );
 }

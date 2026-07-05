@@ -17,24 +17,20 @@ export function TaskRow({
   return (
     <div
       onClick={onClick}
-      className="flex cursor-pointer items-center gap-2 rounded-lg border border-neutral-200 bg-white px-3 py-2 hover:border-neutral-300"
+      className="cursor-pointer rounded-lg border border-neutral-200 bg-white px-1.5 py-1 hover:border-neutral-300"
     >
-      <div className="min-w-0 flex-1">
-        <p
-          className={clsx(
-            "truncate text-sm font-medium text-neutral-900",
-            task.status === "done" && "text-neutral-400 line-through",
-          )}
-        >
-          {task.title}
-        </p>
-        {category && (
-          <div className="mt-1">
-            <CategoryChip category={category} />
-          </div>
+      <p
+        className={clsx(
+          "line-clamp-3 break-words text-xs font-medium leading-snug text-neutral-900",
+          task.status === "done" && "text-neutral-400 line-through",
         )}
+      >
+        {task.title}
+      </p>
+      <div className="mt-1 flex items-center gap-1">
+        <CategoryChip category={category} />
+        <TaskStatusToggle status={task.status} onNext={onStatusChange} />
       </div>
-      <TaskStatusToggle status={task.status} onNext={onStatusChange} />
     </div>
   );
 }

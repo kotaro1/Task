@@ -6,6 +6,20 @@ export function getWeekDays(base: Date): Date[] {
   return Array.from({ length: 7 }, (_, i) => addDays(base, i));
 }
 
+// Multiple consecutive 7-day windows starting from `base`, so scrolling down
+// the week view reveals further weeks (a rolling month-ish view).
+export function getWeeks(base: Date, weekCount: number): Date[][] {
+  return Array.from({ length: weekCount }, (_, w) =>
+    getWeekDays(addDays(base, w * 7)),
+  );
+}
+
+export function formatWeekRangeJp(weekDays: Date[]): string {
+  const start = weekDays[0];
+  const end = weekDays[weekDays.length - 1];
+  return `${format(start, "M/d")} 〜 ${format(end, "M/d")}`;
+}
+
 export function toDateInputValue(date: Date): string {
   return format(date, "yyyy-MM-dd");
 }

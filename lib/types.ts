@@ -1,4 +1,4 @@
-export type TaskScale = "day" | "week" | "year" | "school" | "life";
+export type TaskScale = "day" | "week" | "month" | "year" | "school" | "life";
 export type TaskStatus = "not_started" | "in_progress" | "done";
 
 export type Category = {
@@ -38,6 +38,7 @@ export type Achievement = {
 export const TASK_SCALE_LABELS: Record<TaskScale, string> = {
   day: "日",
   week: "週",
+  month: "月",
   year: "年",
   school: "在学中",
   life: "人生",

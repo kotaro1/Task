@@ -3,7 +3,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Category, Task } from "@/lib/types";
-import { getWeekDays, toDateInputValue } from "@/lib/dates";
+import { getWeeks, toDateInputValue } from "@/lib/dates";
+
+const WEEK_COUNT = 5;
 import { useFocusRefetch } from "@/lib/hooks/useFocusRefetch";
 import { useTaskMutations } from "@/lib/hooks/useTaskMutations";
 import { WeekCalendarView } from "@/components/tasks/WeekCalendarView";
@@ -11,9 +13,10 @@ import { TaskFormModal } from "@/components/tasks/TaskFormModal";
 import { PromoteToAchievementModal } from "@/components/achievements/PromoteToAchievementModal";
 
 export default function WeekPage() {
-  const weekDays = useMemo(() => getWeekDays(new Date()), []);
-  const rangeStart = toDateInputValue(weekDays[0]);
-  const rangeEnd = toDateInputValue(weekDays[weekDays.length - 1]);
+  const weeks = useMemo(() => getWeeks(new Date(), WEEK_COUNT), []);
+  const rangeStart = toDateInputValue(weeks[0][0]);
+  const lastWeek = weeks[weeks.length - 1];
+  const rangeEnd = toDateInputValue(lastWeek[lastWeek.length - 1]);
 
   const [tasks, setTasks] = useState<Task[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -74,7 +77,7 @@ export default function WeekPage() {
     <div>
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-lg font-semibold text-neutral-900">
-          今週のタスク
+          今後のタスク
         </h1>
         <button
           type="button"
@@ -89,7 +92,7 @@ export default function WeekPage() {
         <p className="text-sm text-neutral-400">読み込み中...</p>
       ) : (
         <WeekCalendarView
-          weekDays={weekDays}
+          weeks={weeks}
           tasks={tasks}
           categoriesById={categoriesById}
           onStatusChange={changeStatus}

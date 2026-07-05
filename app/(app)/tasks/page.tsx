@@ -2,21 +2,19 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Category, Task, TaskScale, TASK_SCALE_LABELS } from "@/lib/types";
+import { Category, Task, TaskScale } from "@/lib/types";
 import { useFocusRefetch } from "@/lib/hooks/useFocusRefetch";
 import { useTaskMutations } from "@/lib/hooks/useTaskMutations";
 import { TaskScaleList } from "@/components/tasks/TaskScaleList";
 import { TaskFormModal } from "@/components/tasks/TaskFormModal";
 import { PromoteToAchievementModal } from "@/components/achievements/PromoteToAchievementModal";
-import clsx from "clsx";
 
-const LONG_SCALES: TaskScale[] = ["year", "school", "life"];
+const LONG_SCALES: TaskScale[] = ["month", "year", "school", "life"];
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeScales, setActiveScales] = useState<TaskScale[]>(LONG_SCALES);
   const [formTask, setFormTask] = useState<Task | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const [promotingTask, setPromotingTask] = useState<Task | null>(null);
@@ -28,6 +26,7 @@ export default function TasksPage() {
         .from("tasks")
         .select("*")
         .in("scale", LONG_SCALES)
+        .eq("status", "not_started")
         .order("created_at", { ascending: false }),
       supabase.from("categories").select("*").order("sort_order"),
     ]);
@@ -50,19 +49,25 @@ export default function TasksPage() {
     [categories],
   );
 
+  // Once a task's status moves off "not_started" it drops out of this backlog
+  // view (this page is for not-yet-started long-term goals only), so remove
+  // it locally instead of re-filtering into the not_started-only fetch above.
   const { changeStatus, upsertLocal, removeLocal } = useTaskMutations(
     setTasks,
     setPromotingTask,
   );
 
-  const visibleTasks = tasks.filter((t) => activeScales.includes(t.scale));
+  function handleStatusChange(task: Task, next: Task["status"]) {
+    changeStatus(task, next);
+    if (next !== "not_started") removeLocal(task.id);
+  }
 
-  function toggleScale(scale: TaskScale) {
-    setActiveScales((prev) =>
-      prev.includes(scale)
-        ? prev.filter((s) => s !== scale)
-        : [...prev, scale],
-    );
+  function handleSaved(task: Task) {
+    if (!LONG_SCALES.includes(task.scale) || task.status !== "not_started") {
+      removeLocal(task.id);
+      return;
+    }
+    upsertLocal(task);
   }
 
   function openNewTaskForm() {
@@ -79,7 +84,7 @@ export default function TasksPage() {
     <div>
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-lg font-semibold text-neutral-900">
-          長期スケールのタスク
+          長期タスク（未着手）
         </h1>
         <button
           type="button"
@@ -90,31 +95,13 @@ export default function TasksPage() {
         </button>
       </div>
 
-      <div className="mb-4 flex gap-2">
-        {LONG_SCALES.map((scale) => (
-          <button
-            key={scale}
-            type="button"
-            onClick={() => toggleScale(scale)}
-            className={clsx(
-              "rounded-full border px-3 py-1 text-xs font-medium",
-              activeScales.includes(scale)
-                ? "border-neutral-900 bg-neutral-900 text-white"
-                : "border-neutral-300 text-neutral-500",
-            )}
-          >
-            {TASK_SCALE_LABELS[scale]}
-          </button>
-        ))}
-      </div>
-
       {loading ? (
         <p className="text-sm text-neutral-400">読み込み中...</p>
       ) : (
         <TaskScaleList
-          tasks={visibleTasks}
+          tasks={tasks}
           categoriesById={categoriesById}
-          onStatusChange={changeStatus}
+          onStatusChange={handleStatusChange}
           onTaskClick={openEditForm}
         />
       )}
@@ -123,10 +110,10 @@ export default function TasksPage() {
         <TaskFormModal
           key={formTask?.id ?? "new"}
           onClose={() => setFormOpen(false)}
-          onSaved={upsertLocal}
+          onSaved={handleSaved}
           onDeleted={removeLocal}
           task={formTask}
-          defaultScale="year"
+          defaultScale="month"
         />
       )}
 

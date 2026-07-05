@@ -49,7 +49,7 @@ export default function AchievementsPage() {
           まだ実績がありません。タスクを達成するか、直接追加してみましょう。
         </p>
       ) : (
-        <div className="flex flex-col gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {achievements.map((a) => (
             <AchievementCard key={a.id} achievement={a} />
           ))}

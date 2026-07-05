@@ -11,7 +11,7 @@ import {
 import { Modal } from "@/components/ui/Modal";
 import { toDateInputValue } from "@/lib/dates";
 
-const SCALES: TaskScale[] = ["day", "week", "year", "school", "life"];
+const SCALES: TaskScale[] = ["day", "week", "month", "year", "school", "life"];
 
 export function TaskFormModal({
   onClose,
@@ -40,6 +40,18 @@ export function TaskFormModal({
   );
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+
+  function handleScaleChange(nextScale: TaskScale) {
+    setScale(nextScale);
+    // Year/school/life tasks shouldn't land on a day slot just because this
+    // form happened to default to today's date — only an explicitly chosen
+    // due date should place them in the week view. Only clear the untouched
+    // default, never a date the user (or an existing task) already set.
+    const isUntouchedDefault = !task && dueDate === (defaultDueDate ?? "");
+    if (nextScale !== "day" && nextScale !== "week" && isUntouchedDefault) {
+      setDueDate("");
+    }
+  }
 
   useEffect(() => {
     const supabase = createClient();
@@ -128,21 +140,21 @@ export function TaskFormModal({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="タイトル"
-          className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900"
+          className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm text-neutral-900 outline-none focus:border-neutral-900"
         />
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="説明（任意）"
           rows={2}
-          className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900"
+          className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm text-neutral-900 outline-none focus:border-neutral-900"
         />
 
         <div className="flex gap-2">
           <select
             value={scale}
-            onChange={(e) => setScale(e.target.value as TaskScale)}
-            className="flex-1 rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900"
+            onChange={(e) => handleScaleChange(e.target.value as TaskScale)}
+            className="flex-1 rounded-lg border border-neutral-300 px-3 py-2 text-sm text-neutral-900 outline-none focus:border-neutral-900"
           >
             {SCALES.map((s) => (
               <option key={s} value={s}>
@@ -153,7 +165,7 @@ export function TaskFormModal({
           <select
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
-            className="flex-1 rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900"
+            className="flex-1 rounded-lg border border-neutral-300 px-3 py-2 text-sm text-neutral-900 outline-none focus:border-neutral-900"
           >
             <option value="">分類なし</option>
             {categories.map((c) => (
@@ -172,7 +184,7 @@ export function TaskFormModal({
             type="date"
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
-            className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900"
+            className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm text-neutral-900 outline-none focus:border-neutral-900"
           />
           {!dueDate && (
             <button

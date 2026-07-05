@@ -17,7 +17,7 @@ export function SignOutButton() {
     <button
       type="button"
       onClick={handleClick}
-      className="hidden text-xs text-neutral-400 hover:text-neutral-600 md:mt-auto md:block md:px-4 md:pb-4"
+      className="hidden text-xs text-neutral-400 hover:text-neutral-600 md:mt-auto md:block md:px-2 md:pb-4 md:text-center"
     >
       ログアウト
     </button>

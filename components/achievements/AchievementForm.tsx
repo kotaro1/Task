@@ -101,20 +101,20 @@ export function AchievementForm({
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="タイトル"
-        className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900"
+        className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm text-neutral-900 outline-none focus:border-neutral-900"
       />
       <input
         type="datetime-local"
         value={achievedAt}
         onChange={(e) => setAchievedAt(e.target.value)}
-        className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900"
+        className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm text-neutral-900 outline-none focus:border-neutral-900"
       />
       <textarea
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         placeholder="説明（任意）"
         rows={3}
-        className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900"
+        className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm text-neutral-900 outline-none focus:border-neutral-900"
       />
       <div>
         <label className="mb-1 block text-xs text-neutral-500">
