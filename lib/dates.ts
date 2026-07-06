@@ -1,16 +1,26 @@
-import { addDays, format, isSameDay as isSameDayFns, parseISO } from "date-fns";
+import {
+  addDays,
+  format,
+  isSameDay as isSameDayFns,
+  parseISO,
+  startOfWeek,
+} from "date-fns";
 
-// Rolling 7-day window starting from `base` (today), not a Mon-Sun calendar week —
-// matches the requirement "1週間後までのタスクを一覧表示".
+// A calendar week (Mon-Sun) containing `base` — Sunday always ends up as the
+// last/rightmost column on desktop.
 export function getWeekDays(base: Date): Date[] {
-  return Array.from({ length: 7 }, (_, i) => addDays(base, i));
+  const start = startOfWeek(base, { weekStartsOn: 1 });
+  return Array.from({ length: 7 }, (_, i) => addDays(start, i));
 }
 
-// Multiple consecutive 7-day windows starting from `base`, so scrolling down
-// the week view reveals further weeks (a rolling month-ish view).
+// Multiple consecutive calendar weeks starting from the week containing
+// `base`, so scrolling down the week view reveals further weeks (a rolling
+// month-ish view). The first row may include days before `base` (earlier
+// this week) — callers should dim those.
 export function getWeeks(base: Date, weekCount: number): Date[][] {
+  const firstWeekStart = startOfWeek(base, { weekStartsOn: 1 });
   return Array.from({ length: weekCount }, (_, w) =>
-    getWeekDays(addDays(base, w * 7)),
+    getWeekDays(addDays(firstWeekStart, w * 7)),
   );
 }
 

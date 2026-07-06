@@ -13,11 +13,13 @@ export function TaskScaleList({
   tasks,
   categoriesById,
   onStatusChange,
+  onImportantChange,
   onTaskClick,
 }: {
   tasks: Task[];
   categoriesById: Map<string, Category>;
   onStatusChange: (task: Task, next: TaskStatus) => void;
+  onImportantChange: (task: Task, next: boolean) => void;
   onTaskClick: (task: Task) => void;
 }) {
   return (
@@ -43,6 +45,7 @@ export function TaskScaleList({
                       : null
                   }
                   onStatusChange={(next) => onStatusChange(task, next)}
+                  onImportantChange={(next) => onImportantChange(task, next)}
                   onClick={() => onTaskClick(task)}
                 />
               ))}

@@ -40,6 +40,29 @@ export function useTaskMutations(
     }
   }
 
+  async function toggleImportant(task: Task, next: boolean) {
+    const previous = task;
+    setTasks((prev) =>
+      prev.map((t) => (t.id === task.id ? { ...t, is_important: next } : t)),
+    );
+
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("tasks")
+      .update({ is_important: next })
+      .eq("id", task.id)
+      .select()
+      .single();
+
+    if (error || !data) {
+      setTasks((prev) => prev.map((t) => (t.id === task.id ? previous : t)));
+      return;
+    }
+    setTasks((prev) =>
+      prev.map((t) => (t.id === task.id ? (data as Task) : t)),
+    );
+  }
+
   function upsertLocal(task: Task) {
     setTasks((prev) => {
       const exists = prev.some((t) => t.id === task.id);
@@ -53,5 +76,5 @@ export function useTaskMutations(
     setTasks((prev) => prev.filter((t) => t.id !== taskId));
   }
 
-  return { changeStatus, upsertLocal, removeLocal };
+  return { changeStatus, toggleImportant, upsertLocal, removeLocal };
 }

@@ -4,13 +4,13 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Category, Task } from "@/lib/types";
 import { getWeeks, toDateInputValue } from "@/lib/dates";
-
-const WEEK_COUNT = 5;
 import { useFocusRefetch } from "@/lib/hooks/useFocusRefetch";
 import { useTaskMutations } from "@/lib/hooks/useTaskMutations";
 import { WeekCalendarView } from "@/components/tasks/WeekCalendarView";
 import { TaskFormModal } from "@/components/tasks/TaskFormModal";
 import { PromoteToAchievementModal } from "@/components/achievements/PromoteToAchievementModal";
+
+const WEEK_COUNT = 5;
 
 export default function WeekPage() {
   const weeks = useMemo(() => getWeeks(new Date(), WEEK_COUNT), []);
@@ -56,10 +56,8 @@ export default function WeekPage() {
     [categories],
   );
 
-  const { changeStatus, upsertLocal, removeLocal } = useTaskMutations(
-    setTasks,
-    setPromotingTask,
-  );
+  const { changeStatus, toggleImportant, upsertLocal, removeLocal } =
+    useTaskMutations(setTasks, setPromotingTask);
 
   function openNewTaskForm(dueDate: string) {
     setFormTask(null);
@@ -96,6 +94,7 @@ export default function WeekPage() {
           tasks={tasks}
           categoriesById={categoriesById}
           onStatusChange={changeStatus}
+          onImportantChange={toggleImportant}
           onTaskClick={openEditForm}
           onAddTask={openNewTaskForm}
         />

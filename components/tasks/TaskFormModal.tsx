@@ -10,6 +10,7 @@ import {
 } from "@/lib/types";
 import { Modal } from "@/components/ui/Modal";
 import { toDateInputValue } from "@/lib/dates";
+import clsx from "clsx";
 
 const SCALES: TaskScale[] = ["day", "week", "month", "year", "school", "life"];
 
@@ -38,6 +39,8 @@ export function TaskFormModal({
   const [dueDate, setDueDate] = useState<string>(
     task?.due_date ?? defaultDueDate ?? "",
   );
+  const [isDeadline, setIsDeadline] = useState(task?.is_deadline ?? false);
+  const [isImportant, setIsImportant] = useState(task?.is_important ?? false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -75,6 +78,8 @@ export function TaskFormModal({
       scale,
       category_id: categoryId || null,
       due_date: dueDate || null,
+      is_deadline: isDeadline,
+      is_important: isImportant,
     };
 
     if (task) {
@@ -134,14 +139,24 @@ export function TaskFormModal({
         {task ? "タスクを編集" : "タスクを追加"}
       </h2>
       <form onSubmit={handleSubmit} className="space-y-3">
-        <input
-          autoFocus
-          required
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="タイトル"
-          className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm text-neutral-900 outline-none focus:border-neutral-900"
-        />
+        <div className="flex items-center gap-2">
+          <input
+            autoFocus
+            required
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="タイトル"
+            className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm text-neutral-900 outline-none focus:border-neutral-900"
+          />
+          <button
+            type="button"
+            onClick={() => setIsImportant((v) => !v)}
+            title={isImportant ? "重要" : "重要にする"}
+            className="shrink-0 rounded-lg border border-neutral-300 px-2 py-2 text-sm"
+          >
+            {isImportant ? "⭐" : "☆"}
+          </button>
+        </div>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -194,6 +209,34 @@ export function TaskFormModal({
             >
               今日を設定
             </button>
+          )}
+          {dueDate && (
+            <div className="mt-2 flex gap-2 text-xs">
+              <button
+                type="button"
+                onClick={() => setIsDeadline(false)}
+                className={clsx(
+                  "rounded-full border px-2.5 py-1",
+                  !isDeadline
+                    ? "border-neutral-900 bg-neutral-900 text-white"
+                    : "border-neutral-300 text-neutral-500",
+                )}
+              >
+                その日にやる
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsDeadline(true)}
+                className={clsx(
+                  "rounded-full border px-2.5 py-1",
+                  isDeadline
+                    ? "border-neutral-900 bg-neutral-900 text-white"
+                    : "border-neutral-300 text-neutral-500",
+                )}
+              >
+                その日までにやる
+              </button>
+            </div>
           )}
         </div>
 

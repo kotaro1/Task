@@ -19,6 +19,8 @@ export type Task = {
   status: TaskStatus;
   category_id: string | null;
   due_date: string | null; // YYYY-MM-DD
+  is_deadline: boolean; // true = "do by this date", false = "do on this date"
+  is_important: boolean;
   completed_at: string | null;
   created_at: string;
   updated_at: string;
@@ -55,6 +57,12 @@ export const TASK_STATUS_ORDER: TaskStatus[] = [
   "in_progress",
   "done",
 ];
+
+export type UserSettings = {
+  id: string;
+  background_image_path: string | null;
+  updated_at: string;
+};
 
 export const DEFAULT_CATEGORY_NAMES = [
   "勉強系",

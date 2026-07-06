@@ -8,6 +8,7 @@ export function WeekCalendarView({
   tasks,
   categoriesById,
   onStatusChange,
+  onImportantChange,
   onTaskClick,
   onAddTask,
 }: {
@@ -15,10 +16,12 @@ export function WeekCalendarView({
   tasks: Task[];
   categoriesById: Map<string, Category>;
   onStatusChange: (task: Task, next: TaskStatus) => void;
+  onImportantChange: (task: Task, next: boolean) => void;
   onTaskClick: (task: Task) => void;
   onAddTask: (dueDate: string) => void;
 }) {
   const today = new Date();
+  const todayValue = toDateInputValue(today);
 
   return (
     <div className="flex flex-col gap-4">
@@ -33,15 +36,30 @@ export function WeekCalendarView({
                 (t) => t.due_date && isSameDay(t.due_date, day),
               );
               const dateValue = toDateInputValue(day);
+              const isToday = dateValue === todayValue;
+              const isPast = dateValue < todayValue;
+              const dayOfWeek = day.getDay();
 
               return (
                 <div
                   key={dateValue}
                   className={clsx(
                     "flex flex-col gap-1 rounded-xl border p-1",
-                    isSameDay(dateValue, today)
-                      ? "border-neutral-900 bg-neutral-50"
-                      : "border-neutral-200",
+                    isToday && "border-2 border-neutral-900 bg-neutral-50",
+                    !isToday && isPast && "border-neutral-200 opacity-50",
+                    !isToday &&
+                      !isPast &&
+                      dayOfWeek === 6 &&
+                      "border-sky-200 bg-sky-50",
+                    !isToday &&
+                      !isPast &&
+                      dayOfWeek === 0 &&
+                      "border-red-200 bg-red-50",
+                    !isToday &&
+                      !isPast &&
+                      dayOfWeek !== 6 &&
+                      dayOfWeek !== 0 &&
+                      "border-neutral-200",
                   )}
                 >
                   <div className="flex items-center justify-between px-1">
@@ -67,6 +85,9 @@ export function WeekCalendarView({
                             : null
                         }
                         onStatusChange={(next) => onStatusChange(task, next)}
+                        onImportantChange={(next) =>
+                          onImportantChange(task, next)
+                        }
                         onClick={() => onTaskClick(task)}
                       />
                     ))}

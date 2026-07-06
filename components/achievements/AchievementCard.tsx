@@ -25,24 +25,20 @@ export function AchievementCard({ achievement }: { achievement: Achievement }) {
   }, [achievement.image_path]);
 
   return (
-    <div className="rounded-xl border border-neutral-200 bg-white p-4">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-xs text-neutral-400">
-            {formatDateTimeJp(achievement.achieved_at)}
-          </p>
-          <h3 className="text-base font-semibold text-neutral-900">
-            {achievement.title}
-          </h3>
-        </div>
-      </div>
+    <div className="rounded-xl border border-neutral-200 bg-white p-2.5">
+      <p className="text-[10px] text-neutral-400">
+        {formatDateTimeJp(achievement.achieved_at)}
+      </p>
+      <h3 className="text-sm font-semibold text-neutral-900">
+        {achievement.title}
+      </h3>
       {achievement.description && (
-        <p className="mt-2 whitespace-pre-wrap text-sm text-neutral-600">
+        <p className="mt-1 whitespace-pre-wrap text-xs text-neutral-600">
           {achievement.description}
         </p>
       )}
       {imageUrl && (
-        <div className="relative mt-3 aspect-video w-full overflow-hidden rounded-lg bg-neutral-100">
+        <div className="relative mt-2 aspect-video w-full overflow-hidden rounded-lg bg-neutral-100">
           <Image
             src={imageUrl}
             alt={achievement.title}

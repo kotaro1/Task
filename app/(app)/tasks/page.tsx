@@ -52,10 +52,8 @@ export default function TasksPage() {
   // Once a task's status moves off "not_started" it drops out of this backlog
   // view (this page is for not-yet-started long-term goals only), so remove
   // it locally instead of re-filtering into the not_started-only fetch above.
-  const { changeStatus, upsertLocal, removeLocal } = useTaskMutations(
-    setTasks,
-    setPromotingTask,
-  );
+  const { changeStatus, toggleImportant, upsertLocal, removeLocal } =
+    useTaskMutations(setTasks, setPromotingTask);
 
   function handleStatusChange(task: Task, next: Task["status"]) {
     changeStatus(task, next);
@@ -102,6 +100,7 @@ export default function TasksPage() {
           tasks={tasks}
           categoriesById={categoriesById}
           onStatusChange={handleStatusChange}
+          onImportantChange={toggleImportant}
           onTaskClick={openEditForm}
         />
       )}

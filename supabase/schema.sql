@@ -25,6 +25,8 @@ create table tasks (
   status task_status not null default 'not_started',
   category_id uuid references categories(id) on delete set null,
   due_date date,
+  is_deadline boolean not null default false,
+  is_important boolean not null default false,
   completed_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -45,12 +47,22 @@ create table achievements (
 );
 create index achievements_user_achieved_idx on achievements (user_id, achieved_at desc);
 
+-- user_settings (one row per user; currently just the background image choice)
+create table user_settings (
+  id uuid primary key references auth.users(id) on delete cascade,
+  background_image_path text,
+  updated_at timestamptz not null default now()
+);
+
 -- updated_at auto-touch
 create or replace function set_updated_at() returns trigger as $$
 begin new.updated_at = now(); return new; end;
 $$ language plpgsql;
 
 create trigger tasks_set_updated_at before update on tasks
+  for each row execute function set_updated_at();
+
+create trigger user_settings_set_updated_at before update on user_settings
   for each row execute function set_updated_at();
 
 -- seed 4 default categories automatically when a new user signs up
@@ -73,6 +85,7 @@ create trigger on_auth_user_created_seed_categories
 alter table categories enable row level security;
 alter table tasks enable row level security;
 alter table achievements enable row level security;
+alter table user_settings enable row level security;
 
 create policy "select own categories" on categories for select using (auth.uid() = user_id);
 create policy "insert own categories" on categories for insert with check (auth.uid() = user_id);
@@ -89,6 +102,10 @@ create policy "insert own achievements" on achievements for insert with check (a
 create policy "update own achievements" on achievements for update using (auth.uid() = user_id);
 create policy "delete own achievements" on achievements for delete using (auth.uid() = user_id);
 
+create policy "select own settings" on user_settings for select using (auth.uid() = id);
+create policy "insert own settings" on user_settings for insert with check (auth.uid() = id);
+create policy "update own settings" on user_settings for update using (auth.uid() = id);
+
 -- storage: run after creating the 'achievement-images' bucket (private) in the Storage UI
 create policy "read own achievement images" on storage.objects
   for select using (bucket_id = 'achievement-images' and auth.uid()::text = (storage.foldername(name))[1]);
@@ -96,3 +113,11 @@ create policy "upload own achievement images" on storage.objects
   for insert with check (bucket_id = 'achievement-images' and auth.uid()::text = (storage.foldername(name))[1]);
 create policy "delete own achievement images" on storage.objects
   for delete using (bucket_id = 'achievement-images' and auth.uid()::text = (storage.foldername(name))[1]);
+
+-- storage: run after creating the 'backgrounds' bucket (private) in the Storage UI
+create policy "read own background images" on storage.objects
+  for select using (bucket_id = 'backgrounds' and auth.uid()::text = (storage.foldername(name))[1]);
+create policy "upload own background images" on storage.objects
+  for insert with check (bucket_id = 'backgrounds' and auth.uid()::text = (storage.foldername(name))[1]);
+create policy "delete own background images" on storage.objects
+  for delete using (bucket_id = 'backgrounds' and auth.uid()::text = (storage.foldername(name))[1]);
