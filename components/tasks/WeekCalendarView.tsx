@@ -1,12 +1,14 @@
-import { Category, Task, TaskStatus } from "@/lib/types";
+import { Category, GoogleCalendarEvent, Task, TaskStatus } from "@/lib/types";
 import { formatJpDay, formatWeekRangeJp, isSameDay, toDateInputValue } from "@/lib/dates";
 import { TaskRow } from "./TaskRow";
+import { GoogleEventRow } from "./GoogleEventRow";
 import clsx from "clsx";
 
 export function WeekCalendarView({
   weeks,
   tasks,
   categoriesById,
+  googleEventsByDate,
   onStatusChange,
   onImportantChange,
   onTaskClick,
@@ -15,6 +17,7 @@ export function WeekCalendarView({
   weeks: Date[][];
   tasks: Task[];
   categoriesById: Map<string, Category>;
+  googleEventsByDate?: Map<string, GoogleCalendarEvent[]>;
   onStatusChange: (task: Task, next: TaskStatus) => void;
   onImportantChange: (task: Task, next: boolean) => void;
   onTaskClick: (task: Task) => void;
@@ -35,6 +38,9 @@ export function WeekCalendarView({
               const dayTasks = tasks.filter(
                 (t) => t.due_date && isSameDay(t.due_date, day),
               );
+              const dayGoogleEvents = googleEventsByDate?.get(
+                toDateInputValue(day),
+              ) ?? [];
               const dateValue = toDateInputValue(day);
               const isToday = dateValue === todayValue;
               const isPast = dateValue < todayValue;
@@ -75,6 +81,9 @@ export function WeekCalendarView({
                     </button>
                   </div>
                   <div className="flex flex-col gap-1">
+                    {dayGoogleEvents.map((event) => (
+                      <GoogleEventRow key={event.id} event={event} />
+                    ))}
                     {dayTasks.map((task) => (
                       <TaskRow
                         key={task.id}
@@ -91,7 +100,7 @@ export function WeekCalendarView({
                         onClick={() => onTaskClick(task)}
                       />
                     ))}
-                    {dayTasks.length === 0 && (
+                    {dayTasks.length === 0 && dayGoogleEvents.length === 0 && (
                       <p className="px-1 text-xs text-neutral-300">タスクなし</p>
                     )}
                   </div>

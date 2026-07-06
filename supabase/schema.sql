@@ -47,10 +47,12 @@ create table achievements (
 );
 create index achievements_user_achieved_idx on achievements (user_id, achieved_at desc);
 
--- user_settings (one row per user; currently just the background image choice)
+-- user_settings (one row per user; background choice + Google Calendar overlay)
 create table user_settings (
   id uuid primary key references auth.users(id) on delete cascade,
   background_image_path text,
+  google_calendar_ics_url text,
+  show_google_calendar boolean not null default false,
   updated_at timestamptz not null default now()
 );
 

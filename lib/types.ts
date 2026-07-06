@@ -61,7 +61,17 @@ export const TASK_STATUS_ORDER: TaskStatus[] = [
 export type UserSettings = {
   id: string;
   background_image_path: string | null;
+  google_calendar_ics_url: string | null;
+  show_google_calendar: boolean;
   updated_at: string;
+};
+
+export type GoogleCalendarEvent = {
+  id: string;
+  title: string;
+  start: string; // ISO
+  end: string; // ISO
+  allDay: boolean;
 };
 
 export const DEFAULT_CATEGORY_NAMES = [

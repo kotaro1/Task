@@ -48,3 +48,7 @@ export function isSameDay(a: string | Date, b: Date): boolean {
 export function formatDateTimeJp(iso: string): string {
   return format(parseISO(iso), "yyyy/MM/dd HH:mm");
 }
+
+export function formatTimeJp(iso: string): string {
+  return format(parseISO(iso), "HH:mm");
+}

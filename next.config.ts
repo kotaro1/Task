@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  serverExternalPackages: ["node-ical", "temporal-polyfill", "rrule-temporal"],
 };
 
 export default nextConfig;
