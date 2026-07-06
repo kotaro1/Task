@@ -112,7 +112,7 @@ export function BackgroundManager() {
         onClick={() => setOpen(true)}
         title="背景を設定"
         aria-label="背景を設定"
-        className="fixed bottom-16 left-2 z-40 flex h-8 w-8 items-center justify-center rounded-full border border-neutral-300 bg-white text-sm shadow-sm md:bottom-2 md:left-2"
+        className="fixed bottom-16 right-2 z-50 flex h-8 w-8 items-center justify-center rounded-full border border-neutral-300 bg-white text-sm shadow-sm md:bottom-2 md:right-2"
       >
         🖼️
       </button>

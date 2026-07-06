@@ -21,28 +21,28 @@ export function TaskRow({
     <div
       onClick={onClick}
       className={clsx(
-        "cursor-pointer rounded-lg border bg-white px-1.5 py-1 hover:border-neutral-400",
+        "relative cursor-pointer rounded-lg border bg-white py-1 pl-1.5 pr-1 hover:border-neutral-400",
         task.is_deadline
-          ? "border-dashed border-neutral-400"
-          : "border-solid border-neutral-200",
+          ? "border-neutral-200 border-l-[3px] border-l-amber-500"
+          : "border-neutral-200",
       )}
     >
       <p
         className={clsx(
-          "break-words text-xs font-medium leading-snug text-neutral-900",
+          "break-words pb-4 text-xs font-medium leading-snug text-neutral-900",
           task.status === "done" && "text-neutral-400 line-through",
         )}
       >
-        {task.title}{" "}
-        <span className="inline-flex items-center gap-0.5 align-middle">
-          <ImportantToggle
-            isImportant={task.is_important}
-            onToggle={onImportantChange}
-          />
-          <CategoryChip category={category} />
-          <TaskStatusToggle status={task.status} onNext={onStatusChange} />
-        </span>
+        {task.title}
       </p>
+      <div className="absolute bottom-0 right-0 flex items-center gap-0.5 rounded-tl-md">
+        <ImportantToggle
+          isImportant={task.is_important}
+          onToggle={onImportantChange}
+        />
+        <CategoryChip category={category} />
+        <TaskStatusToggle status={task.status} onNext={onStatusChange} />
+      </div>
     </div>
   );
 }

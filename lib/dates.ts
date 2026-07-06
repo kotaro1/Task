@@ -6,10 +6,10 @@ import {
   startOfWeek,
 } from "date-fns";
 
-// A calendar week (Mon-Sun) containing `base` — Sunday always ends up as the
-// last/rightmost column on desktop.
+// A calendar week (Sun-Sat) containing `base` — Sunday is always the
+// first/leftmost column.
 export function getWeekDays(base: Date): Date[] {
-  const start = startOfWeek(base, { weekStartsOn: 1 });
+  const start = startOfWeek(base, { weekStartsOn: 0 });
   return Array.from({ length: 7 }, (_, i) => addDays(start, i));
 }
 
@@ -18,7 +18,7 @@ export function getWeekDays(base: Date): Date[] {
 // month-ish view). The first row may include days before `base` (earlier
 // this week) — callers should dim those.
 export function getWeeks(base: Date, weekCount: number): Date[][] {
-  const firstWeekStart = startOfWeek(base, { weekStartsOn: 1 });
+  const firstWeekStart = startOfWeek(base, { weekStartsOn: 0 });
   return Array.from({ length: weekCount }, (_, w) =>
     getWeekDays(addDays(firstWeekStart, w * 7)),
   );

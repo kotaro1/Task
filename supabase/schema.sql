@@ -68,11 +68,11 @@ create trigger user_settings_set_updated_at before update on user_settings
 -- seed 4 default categories automatically when a new user signs up
 create or replace function seed_default_categories() returns trigger as $$
 begin
-  insert into public.categories (user_id, name, sort_order) values
-    (new.id, '勉強系', 0),
-    (new.id, 'その他雑用', 1),
-    (new.id, '他人関係', 2),
-    (new.id, 'イベント', 3);
+  insert into public.categories (user_id, name, sort_order, color) values
+    (new.id, '勉強系', 0, '#14b8a6'),
+    (new.id, 'その他雑用', 1, '#78716c'),
+    (new.id, '他人関係', 2, '#f43f5e'),
+    (new.id, 'イベント', 3, '#f59e0b');
   return new;
 end;
 $$ language plpgsql security definer set search_path = public;
